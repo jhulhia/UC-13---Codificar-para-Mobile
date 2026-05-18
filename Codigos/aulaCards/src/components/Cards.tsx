@@ -1,7 +1,7 @@
-import React from 'react';
+
 import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle } from '@ionic/react';
 
-function Example() {
+function CardComponent() {
   return (
     <IonCard>
       <IonCardHeader>
@@ -13,4 +13,4 @@ function Example() {
     </IonCard>
   );
 }
-export default Example;
+export default CardComponent;
