@@ -5,13 +5,28 @@ import { Produto } from '../models/Produto';
 
 const Home: React.FC = () => {
   const [produtos, setProdutos] = useState<Produto[]>([]);
+  const nomeRef = useRef<any>(null);
+  const precoRef = useRef<any>(null);
+  const estoqueRef = useRef<any>(null);
 
   function adicionar(){
-    const novoProduto = new Produto("Feijão", 5.00);
+    const nome = nomeRef.current?.value || "";
+    const preco = parseFloat(precoRef.current?.value || "0");
+    const estoque = parseInt(estoqueRef.current?.value || "0");
 
-    setProdutos([...produtos, novoProduto])
+    if (nome && preco > 0) {
+      const novoProduto = new Produto(nome, preco);
+      novoProduto.adicionarEstoque(estoque);
+      
+      setProdutos([...produtos, novoProduto]);
+      
+      console.log("Produto adicionado:", novoProduto);
 
-    console.log(produtos);
+      
+      if (nomeRef.current) nomeRef.current.value = "";
+      if (precoRef.current) precoRef.current.value = "";
+      if (estoqueRef.current) estoqueRef.current.value = "";
+    }
   }
   return (
     <IonPage>
@@ -22,14 +37,14 @@ const Home: React.FC = () => {
       </IonHeader>
       <IonContent fullscreen>
          <br />
-        <IonInput label="Descrição do Produto" labelPlacement="floating" fill="outline" placeholder="Digite aqui"></IonInput> 
+        <IonInput ref={nomeRef} label="Descrição do Produto" labelPlacement="floating" fill="outline" placeholder="Digite aqui"></IonInput> 
       
       <br />
 
-        <IonInput label="Preço" labelPlacement="floating" fill="outline" placeholder="Digite aqui"></IonInput>
+        <IonInput ref={precoRef} label="Preço" labelPlacement="floating" fill="outline" placeholder="Digite aqui"></IonInput>
       <br />
 
-        <IonInput label="Estoque" labelPlacement="floating" fill="outline" placeholder="Digite aqui"></IonInput>
+        <IonInput ref={estoqueRef} label="Estoque" labelPlacement="floating" fill="outline" placeholder="Digite aqui"></IonInput>
       
       <IonButton onClick={adicionar}> Cadastrar Produto</IonButton>
       </IonContent>
