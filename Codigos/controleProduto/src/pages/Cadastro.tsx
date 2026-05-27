@@ -1,13 +1,17 @@
-import React, {useState, useRef} from 'react';
+import React, {useRef} from 'react';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton } from '@ionic/react';
 import './Home.css';
 import { Produto } from '../models/Produto';
+import { useHistory } from 'react-router';
 
-const Cadastro: React.FC = () => {
-  const [produtos, setProdutos] = useState<Produto[]>([]);
+interface CadastroProps { addProduto: (p: Produto) => void }
+
+
+const Cadastro: React.FC<CadastroProps> = ({ addProduto }) => {
   const nomeRef = useRef<any>(null);
   const precoRef = useRef<any>(null);
   const estoqueRef = useRef<any>(null);
+  const history = useHistory();
 
   function adicionarProduto(){
     const nome = nomeRef.current?.value || "";
@@ -17,17 +21,18 @@ const Cadastro: React.FC = () => {
     if (nome && preco > 0) {
       const novoProduto = new Produto(nome, preco);
       novoProduto.adicionarEstoque(estoque);
-      
-      setProdutos([...produtos, novoProduto]);
-      
-      console.log("Produto adicionado:", novoProduto);
-      console.log("Produtos:", produtos);
+      addProduto(novoProduto);
 
-      
       if (nomeRef.current) nomeRef.current.value = "";
       if (precoRef.current) precoRef.current.value = "";
       if (estoqueRef.current) estoqueRef.current.value = "";
+
+      //history.push('/home');
     }
+  }
+  
+  function navegarParaHome(){
+    history.push('/home');
   }
   return (
     <IonPage>
@@ -37,6 +42,7 @@ const Cadastro: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        <IonButton onClick={navegarParaHome}> Voltar para Home</IonButton>
          <br />
         <IonInput ref={nomeRef} label="Descrição do Produto" labelPlacement="floating" fill="outline" placeholder="Digite aqui"></IonInput> 
       
