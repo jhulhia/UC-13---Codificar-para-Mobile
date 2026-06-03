@@ -5,28 +5,49 @@ import { Produto } from "../models/Produto";
 export class ProdutoService {
    private chave = "produtos";
 
-   //salvar lista de produtos
-    salva(produtos: Produto[]){
-        localStorage.setItem(this.chave, JSON.stringify(produtos));
-    }
-
+   baseUrl = "http://localhost:3000";
+  
     //obter lista de produtos
-    listar(): Produto[]{
-        const dados = localStorage.getItem(this.chave);
-        if(!dados) return [];
-        return JSON.parse(dados);
+    async listar(){
+        try {
+            const res = await fetch(`${this.baseUrl}/produtos`);
+            if (!res.ok) {
+                throw new Error(`Erro na requisição: ${res.status}`);
+            }
+            return await res.json();
+        } catch (error) {
+            console.error("Erro ao listar produtos:", error);
+            return [];
+        }
     }
     //adicionar um produto
-    adicionar(produto: Produto){
-        const lista = this.listar();
-        lista.push(produto);
-        this.salva(lista);
+    async adicionar(produto: any){
+        try {
+            const res = await fetch(`${this.baseUrl}/produtos`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(produto)
+            });
+            if (!res.ok) {
+                throw new Error(`Falha ao adicionar produto: ${res.status}`);
+            }
+            return await res.json();
+        } catch (error) {
+            console.error("Erro ao adicionar produto:", error);
+            return null;
+        }
     }
 
     //remover um produto
-    remover(index: number){
-        const lista = this.listar();
-        lista.splice(index, 1);
-        this.salva(lista);
+    async remover(id: number){
+        try {
+            await fetch(`${this.baseUrl}/produtos/${id}`, {
+                method: "DELETE"
+            });
+        } catch (error) {
+            console.error("Erro ao remover produto:", error);
+        }
     }
 }    

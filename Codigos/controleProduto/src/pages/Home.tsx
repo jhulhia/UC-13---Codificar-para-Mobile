@@ -1,14 +1,28 @@
-import React from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonNavLink, IonList, IonLabel, IonItem } from '@ionic/react';
-import './Home.css';
-import { Produto } from '../models/Produto';
+import React, { useEffect } from 'react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonList, IonLabel, IonItem, useIonViewWillEnter } from '@ionic/react';
+import { useState } from 'react';
+import { ProdutoService } from '../service/ProdutoService';
 import { useHistory } from 'react-router';
 
-interface HomeProps { produtos: Produto[] }
-
-const Home: React.FC<HomeProps> = ({ produtos }) => {
+const Home: React.FC = () => {
   const history = useHistory();
 
+  const [produtos, setProdutos] = useState<any[]>([]);
+
+  //criando uma instância do serviço para manipular os produtos
+  const service = new ProdutoService();
+
+  //carregando os produtos ao montar o componente e sempre que a view entrar em foco
+  useIonViewWillEnter(() => {
+    carregarProdutos();
+  });
+
+  async function carregarProdutos() {
+    const produtosCarregados = await service.listar();
+    setProdutos(produtosCarregados);
+  }
+  
+  //navegando para a página de cadastro
   function navegarParaCadastro(){
     history.push('/cadastro');
   }
@@ -25,15 +39,16 @@ const Home: React.FC<HomeProps> = ({ produtos }) => {
         <IonButton onClick={navegarParaCadastro}> Cadastrar Produto</IonButton>
          
          <IonList>
-          {produtos.map((produto, index) => (
-            <IonItem key={index}>
-              <IonLabel>
-                {produto.nome} - R$ {produto.preco.toFixed(2)} | Estoque: {produto.estoque}
-              </IonLabel>
-              
+          {produtos.map((produto, index) => {
+            const estoque = produto.estoque ?? produto.quantidade ?? 0;
+            return (
+              <IonItem key={index}>
+                <IonLabel>
+                  {produto.nome} - R$ {produto.preco.toFixed(2)} | Estoque: {estoque}
+                </IonLabel>
               </IonItem>
-              
-          ))}
+            );
+          })}
 
          </IonList>
       </IonContent>

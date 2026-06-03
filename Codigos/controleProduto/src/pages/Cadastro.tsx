@@ -1,30 +1,25 @@
-import React, {useRef} from 'react';
+import React, { useRef } from 'react';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton } from '@ionic/react';
-import { Produto } from '../models/Produto';
 import { useHistory } from 'react-router';
 import { useIonAlert } from '@ionic/react';
+import { ProdutoService } from '../service/ProdutoService';
 
-interface CadastroProps { addProduto: (p: Produto) => void }
-
-
-const Cadastro: React.FC<CadastroProps> = ({ addProduto }) => {
+const Cadastro: React.FC = () => {
   const nomeRef = useRef<any>(null);
   const precoRef = useRef<any>(null);
   const estoqueRef = useRef<any>(null);
   const history = useHistory();
 
   const [presentAlert] = useIonAlert();
+  const service = new ProdutoService();
 
-  function adicionarProduto(){
+  async function salvar() {
     const nome = nomeRef.current?.value || "";
     const preco = parseFloat(precoRef.current?.value || "0");
     const estoque = parseInt(estoqueRef.current?.value || "0");
 
-    if (nome && preco > 0) {
-      const novoProduto = new Produto(nome, preco);
-      novoProduto.adicionarEstoque(estoque);
-      addProduto(novoProduto);
-
+    if (nome && preco > 0 && estoque > 0) {
+      await service.adicionar({ nome, preco, estoque });
       presentAlert({
         header: 'Sucesso',
         message: 'Produto cadastrado com sucesso!',
@@ -35,20 +30,20 @@ const Cadastro: React.FC<CadastroProps> = ({ addProduto }) => {
       if (precoRef.current) precoRef.current.value = "";
       if (estoqueRef.current) estoqueRef.current.value = "";
 
-      //redirecionar para Home
       //history.push('/home');
     } else {
       presentAlert({
         header: 'Erro',
-        message: 'Por favor, preencha o nome e o preço corretamente.',
+        message: 'Por favor, preencha o nome, preço e estoque corretamente.',
         buttons: ['OK']
       });
     }
   }
-  
+
   function navegarParaHome(){
     history.push('/home');
   }
+
   return (
     <IonPage>
       <IonHeader>
@@ -58,17 +53,13 @@ const Cadastro: React.FC<CadastroProps> = ({ addProduto }) => {
       </IonHeader>
       <IonContent fullscreen>
         <IonButton onClick={navegarParaHome}> Voltar para Home</IonButton>
-         <br />
-        <IonInput ref={nomeRef} label="Descrição do Produto" labelPlacement="floating" fill="outline" placeholder="Digite aqui"></IonInput> 
-      
-      <br />
-
+        <br />
+        <IonInput ref={nomeRef} label="Descrição do Produto" labelPlacement="floating" fill="outline" placeholder="Digite aqui"></IonInput>
+        <br />
         <IonInput ref={precoRef} label="Preço" labelPlacement="floating" fill="outline" placeholder="Digite aqui"></IonInput>
-      <br />
-
+        <br />
         <IonInput ref={estoqueRef} label="Estoque" labelPlacement="floating" fill="outline" placeholder="Digite aqui"></IonInput>
-      
-      <IonButton onClick={adicionarProduto}> Cadastrar Produto</IonButton>
+        <IonButton onClick={salvar}> Cadastrar Produto</IonButton>
       </IonContent>
     </IonPage>
   );
