@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonList, IonLabel, IonItem, useIonViewWillEnter } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonList, IonLabel, IonItem, useIonViewWillEnter, IonIcon, IonTab, IonItemSliding, IonItemOption, IonItemOptions, IonItemOption} from '@ionic/react';
 import { useState } from 'react';
 import { ProdutoService } from '../service/ProdutoService';
 import { useHistory } from 'react-router';
@@ -22,6 +22,10 @@ const Home: React.FC = () => {
     setProdutos(produtosCarregados);
   }
   
+  async function removerProduto(id: number) {
+    await service.remover(id);
+    carregarProdutos();
+  }
   //navegando para a página de cadastro
   function navegarParaCadastro(){
     history.push('/cadastro');
@@ -36,20 +40,29 @@ const Home: React.FC = () => {
       <IonContent className='ion-padding'>
         <h2>Bem-vindo ao Controle de Estoque</h2>
 
-        <IonButton onClick={navegarParaCadastro}> Cadastrar Produto</IonButton>
-         
+        <IonButton onClick={navegarParaCadastro}> Cadastrar Produto</IonButton>         
          <IonList>
           {produtos.map((produto, index) => {
             const estoque = produto.estoque ?? produto.quantidade ?? 0;
             return (
-              <IonItem key={index}>
+              <IonItemSliding key={index}>
+                <IonItem>                  
                 <IonLabel>
-                  {produto.nome} - R$ {produto.preco.toFixed(2)} | Estoque: {estoque}
-                </IonLabel>
-              </IonItem>
-            );
-          })}
+                  {produto.nome} - R$ {produto.preco.toFixed(2)} | Estoque: {estoque}               
+               </IonLabel>             
+               <ion-icon name="trash-bin-outline">                                  
+               <IonItemOptions > 
+                <IonItemOption color='danger' onClick={() => removerProduto(produto.id)}>
+                  Remover
+                </IonItemOption>
+               </IonItemOptions>                
+               </ion-icon>
+              </IonItem>              
+              </IonItemSliding>
 
+            );
+            
+          })}          
          </IonList>
       </IonContent>
     </IonPage>
