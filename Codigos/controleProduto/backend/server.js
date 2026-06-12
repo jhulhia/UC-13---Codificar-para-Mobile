@@ -28,6 +28,7 @@ app.post("/produtos", (req, res) => {
     const dados = fs.readFileSync(arquivo, "utf-8");
     const produtos = JSON.parse(dados);
     
+    console.log("Recebido produto:", req.body);
     const novoProduto = {
         id: Date.now(),
         ...req.body

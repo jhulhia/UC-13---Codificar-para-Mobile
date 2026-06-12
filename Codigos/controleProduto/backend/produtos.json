@@ -4,5 +4,11 @@
     "nome": "Feijão",
     "preco": 3,
     "estoque": 30
+  },
+  {
+    "id": 1781209982631,
+    "nome": "cafe",
+    "preco": 5,
+    "estoque": 10
   }
 ]
