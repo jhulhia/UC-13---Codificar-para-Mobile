@@ -2,8 +2,8 @@ import express from "express";
 import fs from "fs";
 
 const app = express();
-app.use(express.json());
 
+// ✅ CORS manual - antes de tudo
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
@@ -14,8 +14,9 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(express.json());
+
 const arquivo = "produtos.json";
-//const arquivo = "produtos2.json";
 const PORT = 3000;
 
 app.get("/produtos", (req, res) => {
@@ -65,4 +66,4 @@ app.delete("/produtos/:id", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
-});     
+});
