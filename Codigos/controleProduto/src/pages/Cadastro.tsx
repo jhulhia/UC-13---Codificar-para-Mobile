@@ -19,6 +19,10 @@ const Cadastro: React.FC = () => {
     const estoque = parseInt(estoqueRef.current?.value || "0");
 
     if (nome && preco > 0 && estoque > 0) {
+      // teste de log para verificar os valores antes de enviar
+      console.log("Salvando produto:", { nome, preco, estoque });
+      
+      // chamando o método adicionar do serviço para salvar o produto
       await service.adicionar({ nome, preco, estoque });
       presentAlert({
         header: 'Sucesso',
